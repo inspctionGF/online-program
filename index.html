@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conférence Universitaire - IGF</title>
+    <link href="https://fonts.cdnfonts.com/css/funnel-display" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0066B3;
+            --primary-dark: #004C85;
+            --primary-light: #0080E1;
+            --text-color: #fff;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --card-text: #333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Funnel Display', sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background: linear-gradient(135deg, var(--primary-dark), var(--primary-color), var(--primary-light));
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+            opacity: 0.12;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+        }
+
+        .header {
+            text-align: center;
+            padding: 3rem 1rem;
+            position: relative;
+        }
+
+        .logo {
+            width: 300px;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin: 0 auto;
+            line-height: 1.8;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .program-title {
+            font-size: 2rem;
+            text-align: center;
+            margin: 2rem 0;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .program-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--card-text);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 
+                0 4px 20px rgba(0, 0, 0, 0.1),
+                0 0 0 1px rgba(255, 255, 255, 0.3),
+                0 0 20px rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .program-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 8px 30px rgba(0, 0, 0, 0.15),
+                0 0 0 1px rgba(255, 255, 255, 0.4),
+                0 0 30px rgba(255, 255, 255, 0.3);
+        }
+
+        .program-card::before {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.1));
+            border-radius: 16px;
+            z-index: -1;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 1rem;
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 0.5rem;
+            position: relative;
+        }
+
+        .time-slot {
+            margin-bottom: 1rem;
+            padding: 0.8rem;
+            background: rgba(0, 102, 179, 0.03);
+            border-radius: 5px;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .time-slot:hover {
+            background: rgba(0, 102, 179, 0.06);
+        }
+
+        .time {
+            font-weight: 600;
+            color: var(--primary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .event {
+            margin-top: 0.5rem;
+        }
+
+        .break {
+            background-color: rgba(0, 102, 179, 0.08);
+            padding: 0.8rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+            position: relative;
+            transition: background-color 0.3s ease;
+        }
+
+        .break:hover {
+            background-color: rgba(0, 102, 179, 0.12);
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header {
+                padding: 2rem 1rem;
+            }
+            
+            .title {
+                font-size: 2rem;
+            }
+            
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            .logo {
+                width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <img src="logo.png" alt="Logo Conférence Universitaire" class="logo">
+        <div class="subtitle">
+            Architecture de contrôle de l'Administration Publique nationale<br>
+            (Compréhension, Enjeux, Défis, Perspectives et Lutte contre la Corruption)
+        </div>
+        <h2 class="program-title">PROGRAMME DE LA JOURNÉE</h2>
+    </div>
+
+    <div class="container">
+        <div class="program-card">
+            <div class="time-slot">
+                <div class="time">8h00 - 8h30</div>
+                <div class="event">Accueil Des Participants</div>
+            </div>
+        </div>
+
+        <div class="program-card">
+            <div class="section-title">PREMIÈRE PARTIE : OUVERTURE DE LA CONFÉRENCE</div>
+            <div class="time-slot">
+                <div class="time">8h30 - 9h00</div>
+                <div class="event">
+                    • Propos de bienvenue<br>
+                    • Hymne national-La Dessalinienne<br>
+                    • Contexte et Objectifs de la journée<br>
+                    • Mots du Représentant de l'ONUDC<br>
+                    • Propos de circonstance de la Directrice Générale, IGCE Goethie Varnelle MORENCY<br>
+                    • Propos du Ministre de l'Économie et des Finances, Monsieur Alfred Fils METELLUS<br>
+                    • Prestation Artistique de Monsieur Bertrand CORNELLY
+                </div>
+            </div>
+        </div>
+
+        <div class="program-card">
+            <div class="section-title">DEUXIÈME PARTIE : PANEL D'INTERVENTION</div>
+            <div class="time-slot">
+                <div class="time">9h00 - 9h15</div>
+                <div class="event">Propos d'ouverture de la conférence et présentation des intervenants</div>
+            </div>
+
+            <div class="section-title">PREMIÈRE SESSION</div>
+            <div class="time-slot">
+                <div class="time">9h15 - 10h30</div>
+                <div class="event">Présentation du thème de la conférence par Emmanuel SAEL</div>
+            </div>
+
+            <div class="break">
+                <div class="time">10h30 - 11h00</div>
+                <div class="event">Pause-café</div>
+            </div>
+
+            <div class="time-slot">
+                <div class="time">11h00 - 11h30</div>
+                <div class="event">
+                    <strong>Contrôle Administratif</strong><br>
+                    • Contrôle Administratif répressif : Monsieur Gassendy CALICE, Représentant de l'ULCC<br>
+                    • Contrôle Administratif préventif : Madame Laaphta DUCLAIR, Inspecteur de l'IGF
+                </div>
+            </div>
+
+            <div class="time-slot">
+                <div class="time">11h30 - 12h00</div>
+                <div class="event">Séance Questions-Réponses</div>
+            </div>
+
+            <div class="time-slot">
+                <div class="time">12h00 - 12h15</div>
+                <div class="event">Prestation de Monsieur Bertrand CORNELLY</div>
+            </div>
+        </div>
+
+        <div class="program-card">
+            <div class="section-title">DEUXIÈME SESSION</div>
+            <div class="time-slot">
+                <div class="time">12h15 - 12h45</div>
+                <div class="event">
+                    <strong>Contrôle parlementaire et Contrôle juridictionnel</strong><br>
+                    • Contrôle Parlementaire : Monsieur Jean Shanon BEAUBLANC, Inspecteur des Finances<br>
+                    • Contrôle Juridictionnel : Me Emmanuel RAPHAEL, Représentant de la CSC/CA
+                </div>
+            </div>
+
+            <div class="time-slot">
+                <div class="time">12h45 - 13h15</div>
+                <div class="event">Séance Questions-Réponses</div>
+            </div>
+
+            <div class="time-slot">
+                <div class="time">13h15 - 13h35</div>
+                <div class="event">QUIZ</div>
+            </div>
+
+            <div class="time-slot">
+                <div class="time">13h35 - 13h45</div>
+                <div class="event">Prestation de Monsieur Samuel EXANTUS</div>
+            </div>
+
+            <div class="break">
+                <div class="time">13h45 - 14h45</div>
+                <div class="event">Pause-Lunch</div>
+            </div>
+        </div>
+
+        <div class="program-card">
+            <div class="section-title">TROISIÈME PARTIE : REMISE DE PRIX ET CLÔTURE</div>
+            <div class="time-slot">
+                <div class="time">14h45 - 15h15</div>
+                <div class="event">
+                    • Synthèse des points abordés<br>
+                    • Remise de certificats et des prix<br>
+                    • Propos de remerciement<br>
+                    • Clôture de la journée
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
