@@ -2,10 +2,71 @@ document.addEventListener('DOMContentLoaded', function() {
     const welcomeModal = document.getElementById('welcomeModal');
     const thankYouMessage = document.getElementById('thankYouMessage');
     const participantForm = document.getElementById('participantForm');
-    const participantNameDisplay = document.getElementById('participantNameDisplay');
+    const participantNameDisplay = document.getElementById('programNameDisplay');
     const programNameDisplay = document.getElementById('programNameDisplay');
     const loadingOverlay = document.getElementById('loadingOverlay');
     const container = document.querySelector('.container');
+
+    // Check if it's past the end time first
+    function isPastEndTime() {
+        const now = new Date();
+        const hours = now.getHours();
+        return hours >= 15; // 3 PM
+    }
+
+    // Check if we're approaching end time
+    function isApproachingEndTime() {
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        return hours === 14 && minutes >= 55; // Start checking 5 minutes before
+    }
+
+    // Function to check time and refresh if needed
+    function checkTimeAndRefresh() {
+        const now = new Date();
+        const hours = now.getHours();
+        const minutes = now.getMinutes();
+        const seconds = now.getSeconds();
+
+        // If we're approaching end time, check more frequently
+        if (isApproachingEndTime()) {
+            // Check every 10 seconds when we're close
+            setTimeout(checkTimeAndRefresh, 10000);
+        } else if (!isPastEndTime()) {
+            // Check every minute otherwise
+            setTimeout(checkTimeAndRefresh, 60000);
+        }
+
+        // If it's exactly 3 PM (15:00:00), refresh the page
+        if (hours === 15 && minutes === 0 && seconds === 0) {
+            window.location.reload();
+        }
+
+        // If we're past end time and not showing thank you message, refresh
+        if (isPastEndTime() && thankYouMessage.style.display !== 'block') {
+            window.location.reload();
+        }
+    }
+
+    // Start checking time
+    checkTimeAndRefresh();
+
+    // If it's already past end time, show thank you message immediately
+    if (isPastEndTime()) {
+        const storedInfo = localStorage.getItem('visitorInfo');
+        const visitorInfo = storedInfo ? JSON.parse(storedInfo) : null;
+        const participantName = visitorInfo ? visitorInfo.name : localStorage.getItem('participantName');
+        
+        if (participantName) {
+            participantNameDisplay.textContent = participantName;
+        }
+        welcomeModal.style.display = 'none';
+        container.style.display = 'none';
+        loadingOverlay.style.display = 'none';
+        thankYouMessage.style.display = 'block';
+        return; // Stop here, don't proceed with normal program display
+    }
 
     // Check if user has already visited
     const storedVisitor = localStorage.getItem('visitorInfo');
@@ -14,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // If we have stored info, check if it's from the same day
         const lastVisit = new Date(visitorInfo.timestamp);
         const now = new Date();
-        if (lastVisit.toDateString() === now.toDateString()) {
+        if (lastVisit.toDateString() === now.toDateString() && !isPastEndTime()) {
             // Same day visit, skip welcome modal
             welcomeModal.style.display = 'none';
             container.style.display = 'block';
@@ -27,12 +88,24 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initially hide the container
     container.style.display = 'none';
 
-    // Show welcome modal on page load
-    welcomeModal.style.display = 'flex';
+    // Show welcome modal on page load if not past end time
+    if (!isPastEndTime()) {
+        welcomeModal.style.display = 'flex';
+    }
 
     // Handle form submission
     participantForm.addEventListener('submit', async function(e) {
         e.preventDefault();
+        
+        // Check if it's past end time before proceeding
+        if (isPastEndTime()) {
+            const participantName = document.getElementById('participantName').value;
+            participantNameDisplay.textContent = participantName;
+            welcomeModal.style.display = 'none';
+            thankYouMessage.style.display = 'block';
+            return;
+        }
+
         const participantName = document.getElementById('participantName').value;
 
         // Get IP address
@@ -60,28 +133,34 @@ document.addEventListener('DOMContentLoaded', function() {
 
         // Simulate loading time (2 seconds) then show the program
         setTimeout(() => {
-            loadingOverlay.style.display = 'none';
-            container.style.display = 'block';
-            // Display name in program title
-            programNameDisplay.textContent = participantName;
+            // Check time again after loading
+            if (isPastEndTime()) {
+                loadingOverlay.style.display = 'none';
+                participantNameDisplay.textContent = participantName;
+                thankYouMessage.style.display = 'block';
+            } else {
+                loadingOverlay.style.display = 'none';
+                container.style.display = 'block';
+                // Display name in program title
+                programNameDisplay.textContent = participantName;
+            }
         }, 2000);
     });
 
-    // Check time and show thank you message
+    // Check time every minute
     function checkTimeAndShowThankYou() {
-        const now = new Date();
-        const hours = now.getHours();
-        const storedInfo = localStorage.getItem('visitorInfo');
-        const visitorInfo = storedInfo ? JSON.parse(storedInfo) : null;
-        const participantName = visitorInfo ? visitorInfo.name : localStorage.getItem('participantName');
+        if (isPastEndTime()) {
+            const storedInfo = localStorage.getItem('visitorInfo');
+            const visitorInfo = storedInfo ? JSON.parse(storedInfo) : null;
+            const participantName = visitorInfo ? visitorInfo.name : localStorage.getItem('participantName');
 
-        if (hours >= 14) { // 2 PM
             if (participantName) {
                 participantNameDisplay.textContent = participantName;
             }
             thankYouMessage.style.display = 'block';
             container.style.display = 'none';
             loadingOverlay.style.display = 'none';
+            welcomeModal.style.display = 'none';
         }
     }
 

@@ -2,7 +2,7 @@
     --primary-color: #0066B3;
     --text-color: #fff;
     --accent-color: #FFA726;
-    --font-family: 'Funnel Display', Arial, sans-serif;
+    --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
 }
 
 * {
@@ -12,13 +12,8 @@
 }
 
 @font-face {
-    font-family: 'Funnel Display';
-    src: url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.eot');
-    src: url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.eot?#iefix') format('embedded-opentype'),
-        url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.woff2') format('woff2'),
-        url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.woff') format('woff'),
-        url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.ttf') format('truetype'),
-        url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.svg#Funnel Display') format('svg');
+    font-family: 'Roboto';
+    src: url('https://fonts.gstatic.com/s/roboto/v20/KFOmCnqEu92Fr1Mu4mxP.ttf') format('truetype');
 }
 
 body {
@@ -46,21 +41,23 @@ body::before {
 
 .header {
     text-align: center;
-    padding: 3rem 1rem;
+    padding: 2rem;
     position: relative;
 }
 
 .logo {
-    width: 600px;
+    width: 300px;
     margin-bottom: 2rem;
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
 
 .subtitle {
     font-size: 1.2rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+    font-weight: 400;
     max-width: 800px;
     margin: 0 auto 2rem auto;
-    line-height: 1.8;
     text-align: center;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -74,11 +71,12 @@ body::before {
     margin: 2rem 0;
     color: #fff;
     line-height: 1.4;
+    font-weight: 700;
 }
 
 #programNameDisplay {
     color: #ffa726;
-    font-weight: bold;
+    font-weight: 700;
 }
 
 .time-slot, .break {
@@ -113,7 +111,9 @@ body::before {
     margin: 2rem 0;
     text-align: left;
     font-size: 1.5rem;
-    font-weight: bold;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
 .program-item {
