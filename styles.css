@@ -54,11 +54,15 @@ body::before {
 
 .program-title {
     font-size: 2.5rem;
+    color: #fff;
     text-align: center;
     margin: 2rem 0;
-    color: white;
-    letter-spacing: 2px;
-    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    line-height: 1.4;
+}
+
+#headerParticipantName {
+    color: #ffa500;
+    font-weight: bold;
 }
 
 .time-slot, .break {
