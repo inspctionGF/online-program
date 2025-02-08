@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
     const welcomeModal = document.getElementById('welcomeModal');
     const thankYouMessage = document.getElementById('thankYouMessage');
     const participantForm = document.getElementById('participantForm');
@@ -10,9 +10,20 @@ document.addEventListener('DOMContentLoaded', function() {
     const thanksMessage = document.getElementById('thanksMessage');
 
     // Définir la date et l'heure de l'événement
-    const EVENT_DATE = new Date(2025, 1, 14); // 14 février 2025 (mois commence à 0)
-    const EVENT_END_HOUR = 18;
+    const EVENT_DATE = new Date(2025, 1, 8);
+    const EVENT_END_HOUR = 19;
     const EVENT_START_HOUR = 8;
+
+    // Vérifier l'IP au démarrage
+    let currentIP = '';
+    try {
+        const response = await fetch('getip.php');
+        const data = await response.json();
+        currentIP = data.ip;
+        console.log('IP actuelle:', currentIP);
+    } catch (error) {
+        console.error('Erreur lors de la récupération de l\'IP:', error);
+    }
 
     function isEventDay() {
         const now = new Date();
@@ -30,9 +41,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function isBeforeEvent() {
         const now = new Date();
-        if (now < EVENT_DATE) return true; // Si on est avant le 14 février
-        if (!isEventDay()) return false; // Si ce n'est pas le jour de l'événement
-        return now.getHours() < EVENT_START_HOUR; // Si c'est avant 8h le jour même
+        if (now < EVENT_DATE) return true;
+        if (!isEventDay()) return false;
+        return now.getHours() < EVENT_START_HOUR;
+    }
+
+    function getStoredParticipant() {
+        const storedData = localStorage.getItem('participant');
+        if (storedData) {
+            try {
+                const data = JSON.parse(storedData);
+                if (data.ip === currentIP) {
+                    console.log('Participant trouvé:', data);
+                    return data.name;
+                }
+            } catch (error) {
+                console.error('Erreur lors de la lecture des données:', error);
+            }
+        }
+        return null;
+    }
+
+    function storeParticipant(name) {
+        const data = {
+            name: name,
+            ip: currentIP,
+            timestamp: new Date().getTime()
+        };
+        localStorage.setItem('participant', JSON.stringify(data));
+        console.log('Participant enregistré:', data);
     }
 
     function updateCountdown() {
@@ -43,13 +80,11 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        // Calculer les jours, heures, minutes et secondes
         const days = Math.floor(difference / (1000 * 60 * 60 * 24));
         const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
         const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
         const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-        // Mettre à jour l'affichage
         document.getElementById('countdown-days').textContent = days.toString().padStart(2, '0');
         document.getElementById('countdown-hours').textContent = hours.toString().padStart(2, '0');
         document.getElementById('countdown-minutes').textContent = minutes.toString().padStart(2, '0');
@@ -64,16 +99,11 @@ document.addEventListener('DOMContentLoaded', function() {
         countdownMessage.style.display = 'block';
         thanksMessage.style.display = 'none';
         
-        // Démarrer le countdown
         updateCountdown();
         setInterval(updateCountdown, 1000);
     }
 
-    function showThanks() {
-        const storedInfo = localStorage.getItem('visitorInfo');
-        const visitorInfo = storedInfo ? JSON.parse(storedInfo) : null;
-        const participantName = visitorInfo ? visitorInfo.name : localStorage.getItem('participantName');
-        
+    function showThanks(participantName) {
         if (participantName) {
             participantNameDisplay.textContent = participantName;
         }
@@ -86,40 +116,34 @@ document.addEventListener('DOMContentLoaded', function() {
         thanksMessage.style.display = 'block';
     }
 
-    // Vérifier l'état initial
+    // Initialisation
     if (isBeforeEvent()) {
         showCountdown();
         return;
     }
 
     if (isPastEndTime()) {
-        showThanks();
+        const existingName = getStoredParticipant();
+        showThanks(existingName);
         return;
     }
 
-    // Check if user has already visited
-    const storedVisitor = localStorage.getItem('visitorInfo');
-    if (storedVisitor) {
-        const visitorInfo = JSON.parse(storedVisitor);
-        const now = new Date();
-        const lastVisit = new Date(visitorInfo.timestamp);
-        if (lastVisit.toDateString() === now.toDateString() && !isPastEndTime() && !isBeforeEvent()) {
-            welcomeModal.style.display = 'none';
-            container.style.display = 'block';
-            programNameDisplay.textContent = visitorInfo.name;
-            return;
-        }
+    // Vérifier si l'utilisateur existe déjà
+    const existingName = getStoredParticipant();
+    if (existingName && !isPastEndTime() && !isBeforeEvent()) {
+        welcomeModal.style.display = 'none';
+        container.style.display = 'block';
+        programNameDisplay.textContent = existingName;
+        return;
     }
 
-    // Initially hide the container
+    // Sinon afficher le modal de bienvenue
     container.style.display = 'none';
-
-    // Show welcome modal on page load if during event time
     if (!isPastEndTime() && !isBeforeEvent()) {
         welcomeModal.style.display = 'flex';
     }
 
-    // Handle form submission
+    // Gestion du formulaire
     participantForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -130,37 +154,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (isPastEndTime()) {
             const participantName = document.getElementById('participantName').value;
-            localStorage.setItem('participantName', participantName);
-            showThanks();
+            showThanks(participantName);
             return;
         }
 
         const participantName = document.getElementById('participantName').value;
-
-        // Get IP address
-        try {
-            const response = await fetch('getip.php');
-            const data = await response.json();
-            
-            // Store visitor info
-            const visitorInfo = {
-                name: participantName,
-                ip: data.ip,
-                timestamp: new Date().getTime()
-            };
-            localStorage.setItem('visitorInfo', JSON.stringify(visitorInfo));
-            localStorage.setItem('participantName', participantName);
-        } catch (error) {
-            console.error('Error getting IP:', error);
-            localStorage.setItem('participantName', participantName);
-        }
+        storeParticipant(participantName);
         
         welcomeModal.style.display = 'none';
         loadingOverlay.style.display = 'flex';
 
         setTimeout(() => {
             if (isPastEndTime()) {
-                showThanks();
+                showThanks(participantName);
             } else {
                 loadingOverlay.style.display = 'none';
                 container.style.display = 'block';
@@ -169,7 +175,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 2000);
     });
 
-    // Check time every minute
+    // Vérification périodique
     function checkTimeAndShowThankYou() {
         if (isBeforeEvent()) {
             showCountdown();
@@ -177,15 +183,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         if (isPastEndTime()) {
-            showThanks();
+            const existingName = getStoredParticipant();
+            showThanks(existingName);
         }
     }
 
-    // Check time every minute
     checkTimeAndShowThankYou();
     setInterval(checkTimeAndShowThankYou, 60000);
 
-    // Footer blur effect on scroll
+    // Footer blur effect
     let lastScrollTop = 0;
     const footer = document.querySelector('.main-footer');
 
