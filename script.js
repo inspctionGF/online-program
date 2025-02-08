@@ -88,4 +88,25 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check time every minute
     checkTimeAndShowThankYou();
     setInterval(checkTimeAndShowThankYou, 60000);
+
+    // Footer blur effect on scroll
+    let lastScrollTop = 0;
+    const footer = document.querySelector('.main-footer');
+
+    window.addEventListener('scroll', function() {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const blurValue = Math.min(20, Math.abs(scrollTop - lastScrollTop) / 2);
+        
+        footer.style.backdropFilter = `blur(${blurValue}px)`;
+        footer.style.webkitBackdropFilter = `blur(${blurValue}px)`;
+        
+        lastScrollTop = scrollTop;
+        
+        // Reset blur after scroll stops
+        clearTimeout(window.scrollTimeout);
+        window.scrollTimeout = setTimeout(() => {
+            footer.style.backdropFilter = 'blur(10px)';
+            footer.style.webkitBackdropFilter = 'blur(10px)';
+        }, 150);
+    }, { passive: true });
 });
