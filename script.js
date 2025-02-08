@@ -7,50 +7,42 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingOverlay = document.getElementById('loadingOverlay');
     const container = document.querySelector('.container');
 
-    // Check if it's past the end time first
+    // Définir la date et l'heure de l'événement
+    const EVENT_DATE = new Date(2025, 1, 14); // 14 février 2025 (mois commence à 0)
+    const EVENT_END_HOUR = 18;
+    const EVENT_START_HOUR = 8;
+
+    function isEventDay() {
+        const now = new Date();
+        return now.getFullYear() === EVENT_DATE.getFullYear() &&
+               now.getMonth() === EVENT_DATE.getMonth() &&
+               now.getDate() === EVENT_DATE.getDate();
+    }
+
     function isPastEndTime() {
+        if (!isEventDay()) return true;
         const now = new Date();
         const hours = now.getHours();
-        return hours >= 15; // 3 PM
+        return hours >= EVENT_END_HOUR;
     }
 
-    // Check if we're approaching end time
-    function isApproachingEndTime() {
+    function isBeforeEvent() {
         const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        return hours === 14 && minutes >= 55; // Start checking 5 minutes before
+        if (now < EVENT_DATE) return true; // Si on est avant le 14 février
+        if (!isEventDay()) return true; // Si ce n'est pas le jour de l'événement
+        return now.getHours() < EVENT_START_HOUR; // Si c'est avant 8h le jour même
     }
 
-    // Function to check time and refresh if needed
-    function checkTimeAndRefresh() {
-        const now = new Date();
-        const hours = now.getHours();
-        const minutes = now.getMinutes();
-        const seconds = now.getSeconds();
-
-        // If we're approaching end time, check more frequently
-        if (isApproachingEndTime()) {
-            // Check every 10 seconds when we're close
-            setTimeout(checkTimeAndRefresh, 10000);
-        } else if (!isPastEndTime()) {
-            // Check every minute otherwise
-            setTimeout(checkTimeAndRefresh, 60000);
-        }
-
-        // If it's exactly 3 PM (15:00:00), refresh the page
-        if (hours === 15 && minutes === 0 && seconds === 0) {
-            window.location.reload();
-        }
-
-        // If we're past end time and not showing thank you message, refresh
-        if (isPastEndTime() && thankYouMessage.style.display !== 'block') {
-            window.location.reload();
-        }
+    // Si nous sommes avant l'événement, afficher un message approprié
+    if (isBeforeEvent()) {
+        welcomeModal.style.display = 'none';
+        container.style.display = 'none';
+        loadingOverlay.style.display = 'none';
+        thankYouMessage.style.display = 'block';
+        document.querySelector('.thank-you-message h2').textContent = "L'événement n'a pas encore commencé";
+        document.querySelector('.thank-you-message p').textContent = "La conférence Universitaire débutera le 14 février 2025 à 8h00";
+        return;
     }
-
-    // Start checking time
-    checkTimeAndRefresh();
 
     // If it's already past end time, show thank you message immediately
     if (isPastEndTime()) {
@@ -59,13 +51,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const participantName = visitorInfo ? visitorInfo.name : localStorage.getItem('participantName');
         
         if (participantName) {
-            participantNameDisplay.textContent = participantName;
+            document.querySelector('.thank-you-message h2').textContent = 'Merci d\'avoir été parmi nous!';
+            document.querySelector('.thank-you-message p').textContent = `Au revoir ${participantName}, nous espérons vous revoir bientôt`;
         }
         welcomeModal.style.display = 'none';
         container.style.display = 'none';
         loadingOverlay.style.display = 'none';
         thankYouMessage.style.display = 'block';
-        return; // Stop here, don't proceed with normal program display
+        return;
     }
 
     // Check if user has already visited
@@ -75,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // If we have stored info, check if it's from the same day
         const lastVisit = new Date(visitorInfo.timestamp);
         const now = new Date();
-        if (lastVisit.toDateString() === now.toDateString() && !isPastEndTime()) {
+        if (lastVisit.toDateString() === now.toDateString() && !isPastEndTime() && !isBeforeEvent()) {
             // Same day visit, skip welcome modal
             welcomeModal.style.display = 'none';
             container.style.display = 'block';
@@ -88,8 +81,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initially hide the container
     container.style.display = 'none';
 
-    // Show welcome modal on page load if not past end time
-    if (!isPastEndTime()) {
+    // Show welcome modal on page load if during event time
+    if (!isPastEndTime() && !isBeforeEvent()) {
         welcomeModal.style.display = 'flex';
     }
 
@@ -97,6 +90,10 @@ document.addEventListener('DOMContentLoaded', function() {
     participantForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        if (isBeforeEvent()) {
+            return; // Ne rien faire si l'événement n'a pas commencé
+        }
+
         // Check if it's past end time before proceeding
         if (isPastEndTime()) {
             const participantName = document.getElementById('participantName').value;
@@ -149,13 +146,24 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Check time every minute
     function checkTimeAndShowThankYou() {
+        if (isBeforeEvent()) {
+            welcomeModal.style.display = 'none';
+            container.style.display = 'none';
+            loadingOverlay.style.display = 'none';
+            thankYouMessage.style.display = 'block';
+            document.querySelector('.thank-you-message h2').textContent = "L'événement n'a pas encore commencé";
+            document.querySelector('.thank-you-message p').textContent = "La conférence débutera le 14 février 2025 à 8h00";
+            return;
+        }
+
         if (isPastEndTime()) {
             const storedInfo = localStorage.getItem('visitorInfo');
             const visitorInfo = storedInfo ? JSON.parse(storedInfo) : null;
             const participantName = visitorInfo ? visitorInfo.name : localStorage.getItem('participantName');
 
             if (participantName) {
-                participantNameDisplay.textContent = participantName;
+                document.querySelector('.thank-you-message h2').textContent = 'Merci d\'avoir été parmi nous!';
+                document.querySelector('.thank-you-message p').textContent = `Au revoir ${participantName}, nous espérons vous revoir bientôt`;
             }
             thankYouMessage.style.display = 'block';
             container.style.display = 'none';
