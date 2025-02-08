@@ -1,0 +1,9 @@
+@font-face {
+    font-family: 'Funnel Display';
+    src: url('./FunnelDisplay-Regular.woff2') format('woff2'),
+         url('./FunnelDisplay-Regular.woff') format('woff'),
+         url('./FunnelDisplay-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}

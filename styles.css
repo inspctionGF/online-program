@@ -2,6 +2,7 @@
     --primary-color: #0066B3;
     --text-color: #fff;
     --accent-color: #FFA726;
+    --font-family: 'Funnel Display', Arial, sans-serif;
 }
 
 * {
@@ -10,8 +11,20 @@
     box-sizing: border-box;
 }
 
+@font-face {
+    font-family: 'Funnel Display';
+    src: url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.eot');
+    src: url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.eot?#iefix') format('embedded-opentype'),
+        url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.woff2') format('woff2'),
+        url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.woff') format('woff'),
+        url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.ttf') format('truetype'),
+        url('https://db.onlinewebfonts.com/t/5b0dd181f7bb4c7e8f0da62eb0edb1b0.svg#Funnel Display') format('svg');
+}
+
 body {
-    font-family: 'Funnel Display', sans-serif;
+    font-family: var(--font-family);
+    font-optical-sizing: auto;
+    font-style: normal;
     line-height: 1.6;
     color: var(--text-color);
     background: #0066B3;
@@ -53,11 +66,13 @@ body::before {
 }
 
 .program-title {
+    font-family: var(--font-family);
+    font-optical-sizing: auto;
+    font-style: normal;
     font-size: 2.5rem;
     text-align: center;
     margin: 2rem 0;
     color: #fff;
-    font-family: 'Funnel Display', sans-serif;
     line-height: 1.4;
 }
 
@@ -90,11 +105,15 @@ body::before {
 }
 
 .section-title {
-    font-size: 1.8rem;
-    color: white;
+    font-family: var(--font-family);
+    font-optical-sizing: auto;
+    font-style: normal;
+    color: #fff;
+    padding: 0.5rem 0;
     margin: 2rem 0;
-    font-weight: 600;
-    text-transform: uppercase;
+    text-align: left;
+    font-size: 1.5rem;
+    font-weight: bold;
 }
 
 .program-item {
