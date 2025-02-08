@@ -360,6 +360,7 @@ body::before {
 @media (max-width: 768px) {
     .container {
         padding: 1rem;
+        padding-bottom: 6rem;
     }
 
     .header {
@@ -478,6 +479,7 @@ body::before {
 @media (max-width: 480px) {
     .container {
         padding: 0.8rem;
+        padding-bottom: 7rem;
     }
 
     .logo {
