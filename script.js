@@ -3,38 +3,23 @@ document.addEventListener('DOMContentLoaded', function() {
     const thankYouMessage = document.getElementById('thankYouMessage');
     const participantForm = document.getElementById('participantForm');
     const participantNameDisplay = document.getElementById('participantNameDisplay');
-    const headerParticipantName = document.getElementById('headerParticipantName');
+    const programNameDisplay = document.getElementById('programNameDisplay');
     const loadingOverlay = document.getElementById('loadingOverlay');
     const container = document.querySelector('.container');
 
-    // Check if it's after end time first
-    const now = new Date();
-    const hours = now.getHours();
-    
-    if (hours >= 12) { // After end time
-        const storedVisitor = localStorage.getItem('visitorInfo');
-        if (storedVisitor) {
-            const visitorInfo = JSON.parse(storedVisitor);
-            participantNameDisplay.textContent = visitorInfo.name;
-        }
-        thankYouMessage.style.display = 'block';
-        container.style.display = 'none';
-        welcomeModal.style.display = 'none';
-        return;
-    }
-
-    // If not after end time, proceed with normal flow
     // Check if user has already visited
     const storedVisitor = localStorage.getItem('visitorInfo');
     if (storedVisitor) {
         const visitorInfo = JSON.parse(storedVisitor);
         // If we have stored info, check if it's from the same day
         const lastVisit = new Date(visitorInfo.timestamp);
+        const now = new Date();
         if (lastVisit.toDateString() === now.toDateString()) {
-            // Same day visit, skip welcome modal and show name
+            // Same day visit, skip welcome modal
             welcomeModal.style.display = 'none';
             container.style.display = 'block';
-            headerParticipantName.textContent = visitorInfo.name;
+            // Display name in program title
+            programNameDisplay.textContent = visitorInfo.name;
             return;
         }
     }
@@ -63,14 +48,10 @@ document.addEventListener('DOMContentLoaded', function() {
             };
             localStorage.setItem('visitorInfo', JSON.stringify(visitorInfo));
             localStorage.setItem('participantName', participantName);
-            
-            // Update header with participant name
-            headerParticipantName.textContent = participantName;
         } catch (error) {
             console.error('Error getting IP:', error);
             // Still store the name if IP fetch fails
             localStorage.setItem('participantName', participantName);
-            headerParticipantName.textContent = participantName;
         }
         
         // Hide welcome modal and show loading
@@ -81,6 +62,8 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(() => {
             loadingOverlay.style.display = 'none';
             container.style.display = 'block';
+            // Display name in program title
+            programNameDisplay.textContent = participantName;
         }, 2000);
     });
 
@@ -88,19 +71,21 @@ document.addEventListener('DOMContentLoaded', function() {
     function checkTimeAndShowThankYou() {
         const now = new Date();
         const hours = now.getHours();
-        const storedVisitor = localStorage.getItem('visitorInfo');
+        const storedInfo = localStorage.getItem('visitorInfo');
+        const visitorInfo = storedInfo ? JSON.parse(storedInfo) : null;
+        const participantName = visitorInfo ? visitorInfo.name : localStorage.getItem('participantName');
 
-        if (hours >= 12) { // After end time
-            if (storedVisitor) {
-                const visitorInfo = JSON.parse(storedVisitor);
-                participantNameDisplay.textContent = visitorInfo.name;
+        if (hours >= 14) { // 2 PM
+            if (participantName) {
+                participantNameDisplay.textContent = participantName;
             }
             thankYouMessage.style.display = 'block';
             container.style.display = 'none';
-            welcomeModal.style.display = 'none';
+            loadingOverlay.style.display = 'none';
         }
     }
 
     // Check time every minute
+    checkTimeAndShowThankYou();
     setInterval(checkTimeAndShowThankYou, 60000);
 });
