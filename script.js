@@ -6,6 +6,21 @@ document.addEventListener('DOMContentLoaded', function() {
     const loadingOverlay = document.getElementById('loadingOverlay');
     const container = document.querySelector('.container');
 
+    // Check if user has already visited
+    const storedVisitor = localStorage.getItem('visitorInfo');
+    if (storedVisitor) {
+        const visitorInfo = JSON.parse(storedVisitor);
+        // If we have stored info, check if it's from the same day
+        const lastVisit = new Date(visitorInfo.timestamp);
+        const now = new Date();
+        if (lastVisit.toDateString() === now.toDateString()) {
+            // Same day visit, skip welcome modal
+            welcomeModal.style.display = 'none';
+            container.style.display = 'block';
+            return;
+        }
+    }
+
     // Initially hide the container
     container.style.display = 'none';
 
@@ -13,10 +28,28 @@ document.addEventListener('DOMContentLoaded', function() {
     welcomeModal.style.display = 'flex';
 
     // Handle form submission
-    participantForm.addEventListener('submit', function(e) {
+    participantForm.addEventListener('submit', async function(e) {
         e.preventDefault();
         const participantName = document.getElementById('participantName').value;
-        localStorage.setItem('participantName', participantName);
+
+        // Get IP address
+        try {
+            const response = await fetch('getip.php');
+            const data = await response.json();
+            
+            // Store visitor info
+            const visitorInfo = {
+                name: participantName,
+                ip: data.ip,
+                timestamp: new Date().getTime()
+            };
+            localStorage.setItem('visitorInfo', JSON.stringify(visitorInfo));
+            localStorage.setItem('participantName', participantName);
+        } catch (error) {
+            console.error('Error getting IP:', error);
+            // Still store the name if IP fetch fails
+            localStorage.setItem('participantName', participantName);
+        }
         
         // Hide welcome modal and show loading
         welcomeModal.style.display = 'none';

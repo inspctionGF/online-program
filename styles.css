@@ -28,6 +28,7 @@ body::before {
     margin: 0 auto;
     padding: 2rem;
     position: relative;
+    padding-bottom: 5rem;
 }
 
 .header {
@@ -305,6 +306,7 @@ body::before {
     position: fixed;
     bottom: 0;
     width: 100%;
+    z-index: 1000;
 }
 
 .footer-content {
