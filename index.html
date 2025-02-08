@@ -31,8 +31,32 @@
 
     <div class="thank-you-message" id="thankYouMessage">
         <img src="https://online.igf.gouv.ht/logo.png" alt="Logo Conférence Universitaire" class="thank-you-logo">
-        <h2>Merci d'avoir été parmi nous!</h2>
-        <p>Au revoir <span id="participantNameDisplay"></span>, nous espérons vous revoir bientôt.</p>
+        <div id="countdownMessage">
+            <h2>L'événement n'a pas encore commencé</h2>
+            <p>La conférence débutera dans :</p>
+            <div class="countdown-container">
+                <div class="countdown-item">
+                    <span class="countdown-value" id="countdown-days">00</span>
+                    <span class="countdown-label">Jours</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="countdown-hours">00</span>
+                    <span class="countdown-label">Heures</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="countdown-minutes">00</span>
+                    <span class="countdown-label">Minutes</span>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-value" id="countdown-seconds">00</span>
+                    <span class="countdown-label">Secondes</span>
+                </div>
+            </div>
+        </div>
+        <div id="thanksMessage" style="display: none;">
+            <h2>Merci d'avoir été parmi nous!</h2>
+            <p>Au revoir <span id="participantNameDisplay"></span>, nous espérons vous revoir bientôt.</p>
+        </div>
         <div class="thank-you-footer">Inspection Générale des Finances</div>
     </div>
 
@@ -153,7 +177,7 @@
     </div>
     <footer class="main-footer">
         <div class="footer-content">
-            <div class="copyright">© Copyright 2025 IGF</div>
+            <div class="copyright"> 2025 IGF</div>
             <a href="https://igf.gouv.ht" target="_blank" class="website-link">
                 <svg class="website-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16">
                     <path fill="currentColor" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>

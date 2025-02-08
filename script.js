@@ -2,10 +2,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const welcomeModal = document.getElementById('welcomeModal');
     const thankYouMessage = document.getElementById('thankYouMessage');
     const participantForm = document.getElementById('participantForm');
-    const participantNameDisplay = document.getElementById('programNameDisplay');
+    const participantNameDisplay = document.getElementById('participantNameDisplay');
     const programNameDisplay = document.getElementById('programNameDisplay');
     const loadingOverlay = document.getElementById('loadingOverlay');
     const container = document.querySelector('.container');
+    const countdownMessage = document.getElementById('countdownMessage');
+    const thanksMessage = document.getElementById('thanksMessage');
 
     // Définir la date et l'heure de l'événement
     const EVENT_DATE = new Date(2025, 1, 14); // 14 février 2025 (mois commence à 0)
@@ -20,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function isPastEndTime() {
-        if (!isEventDay()) return true;
+        if (!isEventDay()) return false;
         const now = new Date();
         const hours = now.getHours();
         return hours >= EVENT_END_HOUR;
@@ -29,35 +31,69 @@ document.addEventListener('DOMContentLoaded', function() {
     function isBeforeEvent() {
         const now = new Date();
         if (now < EVENT_DATE) return true; // Si on est avant le 14 février
-        if (!isEventDay()) return true; // Si ce n'est pas le jour de l'événement
+        if (!isEventDay()) return false; // Si ce n'est pas le jour de l'événement
         return now.getHours() < EVENT_START_HOUR; // Si c'est avant 8h le jour même
     }
 
-    // Si nous sommes avant l'événement, afficher un message approprié
-    if (isBeforeEvent()) {
+    function updateCountdown() {
+        const now = new Date();
+        const difference = EVENT_DATE - now;
+
+        if (difference <= 0) {
+            return;
+        }
+
+        // Calculer les jours, heures, minutes et secondes
+        const days = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+
+        // Mettre à jour l'affichage
+        document.getElementById('countdown-days').textContent = days.toString().padStart(2, '0');
+        document.getElementById('countdown-hours').textContent = hours.toString().padStart(2, '0');
+        document.getElementById('countdown-minutes').textContent = minutes.toString().padStart(2, '0');
+        document.getElementById('countdown-seconds').textContent = seconds.toString().padStart(2, '0');
+    }
+
+    function showCountdown() {
         welcomeModal.style.display = 'none';
         container.style.display = 'none';
         loadingOverlay.style.display = 'none';
         thankYouMessage.style.display = 'block';
-        document.querySelector('.thank-you-message h2').textContent = "L'événement n'a pas encore commencé";
-        document.querySelector('.thank-you-message p').textContent = "La conférence Universitaire débutera le 14 février 2025 à 8h00";
-        return;
+        countdownMessage.style.display = 'block';
+        thanksMessage.style.display = 'none';
+        
+        // Démarrer le countdown
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
     }
 
-    // If it's already past end time, show thank you message immediately
-    if (isPastEndTime()) {
+    function showThanks() {
         const storedInfo = localStorage.getItem('visitorInfo');
         const visitorInfo = storedInfo ? JSON.parse(storedInfo) : null;
         const participantName = visitorInfo ? visitorInfo.name : localStorage.getItem('participantName');
         
         if (participantName) {
-            document.querySelector('.thank-you-message h2').textContent = 'Merci d\'avoir été parmi nous!';
-            document.querySelector('.thank-you-message p').textContent = `Au revoir ${participantName}, nous espérons vous revoir bientôt`;
+            participantNameDisplay.textContent = participantName;
         }
+        
         welcomeModal.style.display = 'none';
         container.style.display = 'none';
         loadingOverlay.style.display = 'none';
         thankYouMessage.style.display = 'block';
+        countdownMessage.style.display = 'none';
+        thanksMessage.style.display = 'block';
+    }
+
+    // Vérifier l'état initial
+    if (isBeforeEvent()) {
+        showCountdown();
+        return;
+    }
+
+    if (isPastEndTime()) {
+        showThanks();
         return;
     }
 
@@ -65,14 +101,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const storedVisitor = localStorage.getItem('visitorInfo');
     if (storedVisitor) {
         const visitorInfo = JSON.parse(storedVisitor);
-        // If we have stored info, check if it's from the same day
-        const lastVisit = new Date(visitorInfo.timestamp);
         const now = new Date();
+        const lastVisit = new Date(visitorInfo.timestamp);
         if (lastVisit.toDateString() === now.toDateString() && !isPastEndTime() && !isBeforeEvent()) {
-            // Same day visit, skip welcome modal
             welcomeModal.style.display = 'none';
             container.style.display = 'block';
-            // Display name in program title
             programNameDisplay.textContent = visitorInfo.name;
             return;
         }
@@ -91,15 +124,14 @@ document.addEventListener('DOMContentLoaded', function() {
         e.preventDefault();
         
         if (isBeforeEvent()) {
-            return; // Ne rien faire si l'événement n'a pas commencé
+            showCountdown();
+            return;
         }
 
-        // Check if it's past end time before proceeding
         if (isPastEndTime()) {
             const participantName = document.getElementById('participantName').value;
-            participantNameDisplay.textContent = participantName;
-            welcomeModal.style.display = 'none';
-            thankYouMessage.style.display = 'block';
+            localStorage.setItem('participantName', participantName);
+            showThanks();
             return;
         }
 
@@ -120,25 +152,18 @@ document.addEventListener('DOMContentLoaded', function() {
             localStorage.setItem('participantName', participantName);
         } catch (error) {
             console.error('Error getting IP:', error);
-            // Still store the name if IP fetch fails
             localStorage.setItem('participantName', participantName);
         }
         
-        // Hide welcome modal and show loading
         welcomeModal.style.display = 'none';
         loadingOverlay.style.display = 'flex';
 
-        // Simulate loading time (2 seconds) then show the program
         setTimeout(() => {
-            // Check time again after loading
             if (isPastEndTime()) {
-                loadingOverlay.style.display = 'none';
-                participantNameDisplay.textContent = participantName;
-                thankYouMessage.style.display = 'block';
+                showThanks();
             } else {
                 loadingOverlay.style.display = 'none';
                 container.style.display = 'block';
-                // Display name in program title
                 programNameDisplay.textContent = participantName;
             }
         }, 2000);
@@ -147,28 +172,12 @@ document.addEventListener('DOMContentLoaded', function() {
     // Check time every minute
     function checkTimeAndShowThankYou() {
         if (isBeforeEvent()) {
-            welcomeModal.style.display = 'none';
-            container.style.display = 'none';
-            loadingOverlay.style.display = 'none';
-            thankYouMessage.style.display = 'block';
-            document.querySelector('.thank-you-message h2').textContent = "L'événement n'a pas encore commencé";
-            document.querySelector('.thank-you-message p').textContent = "La conférence débutera le 14 février 2025 à 8h00";
+            showCountdown();
             return;
         }
 
         if (isPastEndTime()) {
-            const storedInfo = localStorage.getItem('visitorInfo');
-            const visitorInfo = storedInfo ? JSON.parse(storedInfo) : null;
-            const participantName = visitorInfo ? visitorInfo.name : localStorage.getItem('participantName');
-
-            if (participantName) {
-                document.querySelector('.thank-you-message h2').textContent = 'Merci d\'avoir été parmi nous!';
-                document.querySelector('.thank-you-message p').textContent = `Au revoir ${participantName}, nous espérons vous revoir bientôt`;
-            }
-            thankYouMessage.style.display = 'block';
-            container.style.display = 'none';
-            loadingOverlay.style.display = 'none';
-            welcomeModal.style.display = 'none';
+            showThanks();
         }
     }
 
@@ -189,7 +198,6 @@ document.addEventListener('DOMContentLoaded', function() {
         
         lastScrollTop = scrollTop;
         
-        // Reset blur after scroll stops
         clearTimeout(window.scrollTimeout);
         window.scrollTimeout = setTimeout(() => {
             footer.style.backdropFilter = 'blur(10px)';
