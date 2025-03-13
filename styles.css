@@ -2,6 +2,9 @@
     --primary-color: #0066B3;
     --text-color: #fff;
     --accent-color: #FFA726;
+    --background-color: #0066B3;
+    --card-background: rgba(0, 102, 179, 0.95);
+    --card-border: #29abe2;
     --font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen-Sans, Ubuntu, Cantarell, sans-serif;
 }
 
@@ -22,9 +25,11 @@ body {
     font-style: normal;
     line-height: 1.6;
     color: var(--text-color);
-    background: #0066B3;
+    background: var(--background-color);
     min-height: 100vh;
     position: relative;
+    background-image: url("data:image/svg+xml,%3Csvg width='6' height='6' viewBox='0 0 6 6' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'%3E%3Ccircle cx='1' cy='1' r='1'/%3E%3Ccircle cx='5' cy='5' r='1'/%3E%3C/g%3E%3C/svg%3E");
+    background-attachment: fixed;
 }
 
 body::before {
@@ -37,6 +42,13 @@ body::before {
     padding: 2rem;
     position: relative;
     padding-bottom: 5rem;
+    background-color: rgba(0, 102, 179, 0.7);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(41, 171, 226, 0.3);
 }
 
 .header {
@@ -46,7 +58,7 @@ body::before {
 }
 
 .logo {
-    width: 300px;
+    width: 350px;
     margin-bottom: 2rem;
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }
@@ -74,6 +86,11 @@ body::before {
     font-weight: 700;
 }
 
+.program-title span {
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
 #programNameDisplay {
     color: #ffa726;
     font-weight: 700;
@@ -85,6 +102,7 @@ body::before {
     border-radius: 8px;
     background: linear-gradient(to right, #0065aa, #0077bf);
     border: 1px solid #29abe2;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .time {
@@ -114,6 +132,7 @@ body::before {
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    border-bottom: 2px solid var(--accent-color);
 }
 
 .program-item {
@@ -121,13 +140,24 @@ body::before {
     color: white;
 }
 
+.program-item strong {
+    color: var(--accent-color);
+    font-weight: 700;
+}
+
 .program-item a, .event a {
     color: #fbb03b;
     text-decoration: none;
+    font-weight: 500;
 }
 
 .program-item a:hover, .event a:hover {
     text-decoration: none;
+}
+
+.person-name {
+    color: var(--accent-color);
+    font-weight: 500;
 }
 
 .modal-overlay {
@@ -157,7 +187,7 @@ body::before {
 }
 
 .modal-logo {
-    width: 250px;
+    width: 300px;
     margin-bottom: 1.5rem;
     display: block;
     margin-left: auto;
@@ -177,7 +207,8 @@ body::before {
 
 .modal-footer {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-color);
+    opacity: 0.8;
     margin-top: 1.5rem;
     text-align: center;
     font-style: italic;
@@ -190,28 +221,29 @@ body::before {
 .form-group label {
     display: block;
     margin-bottom: 0.5rem;
-    color: white;
+    color: var(--text-color);
 }
 
 .form-group input {
     width: 100%;
     padding: 0.8rem;
-    border: 1px solid #29abe2;
+    border: 1px solid var(--card-border);
     border-radius: 6px;
-    background: rgba(255, 255, 255, 0.9);
+    background: var(--background-color);
     font-size: 1rem;
 }
 
 .modal-button {
-    background-color: #fbb03b;
+    background: var(--primary-color);
     color: white;
     border: none;
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 2rem;
     border-radius: 6px;
-    font-size: 1rem;
     cursor: pointer;
-    width: 100%;
-    transition: background-color 0.3s ease;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .modal-button:hover {
@@ -219,22 +251,21 @@ body::before {
 }
 
 .thank-you-message {
-    background: rgba(0, 102, 179, 0.95);
-    padding: 40px 20px;
+    background: var(--card-background);
+    padding: 40px;
     border-radius: 20px;
     text-align: center;
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 600px;
+    width: 90%;
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    width: 90%;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    border: 2px solid #29abe2;
+    border: 2px solid var(--card-border);
+    color: var(--text-color);
+    z-index: 1001;
     display: none;
-    z-index: 1000;
-    color: white;
 }
 
 .thank-you-logo {
@@ -243,14 +274,14 @@ body::before {
 }
 
 .thank-you-message h2 {
-    color: #ffffff;
+    color: var(--primary-color);
     font-size: 2rem;
     margin-bottom: 20px;
     font-weight: 700;
 }
 
 .thank-you-message p {
-    color: #ffffff;
+    color: var(--text-color);
     font-size: 1.2rem;
     margin-bottom: 30px;
     line-height: 1.6;
@@ -258,8 +289,10 @@ body::before {
 
 .thank-you-footer {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
-    margin-top: 2rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-top: 1.5rem;
+    text-align: center;
     font-style: italic;
 }
 
@@ -269,7 +302,7 @@ body::before {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #0066B3;
+    background-color: var(--background-color);
     display: none;
     justify-content: center;
     align-items: center;
@@ -289,7 +322,7 @@ body::before {
     width: 100%;
     height: 100%;
     border-radius: 50%;
-    background-color: #fbb03b;
+    background-color: var(--accent-color);
     position: absolute;
     top: 0;
     left: 0;
@@ -305,7 +338,7 @@ body::before {
     top: 120%;
     left: 50%;
     transform: translateX(-50%);
-    color: white;
+    color: var(--text-color);
     font-size: 1.2rem;
     white-space: nowrap;
 }
@@ -331,7 +364,7 @@ body::before {
 }
 
 .main-footer {
-    background: rgba(0, 101, 170, 0.8);
+    background: var(--primary-color);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     border-top: 1px solid rgba(41, 171, 226, 0.3);
@@ -394,13 +427,13 @@ body::before {
 }
 
 .countdown-item {
-    background: rgba(255, 255, 255, 0.15);
+    background: var(--card-background);
     border-radius: 12px;
     padding: 15px 25px;
     min-width: 100px;
     text-align: center;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-    border: 2px solid #29abe2;
+    border: 2px solid var(--card-border);
     transition: all 0.3s ease;
     display: flex;
     flex-direction: column;
@@ -412,7 +445,7 @@ body::before {
     display: block;
     font-size: 2.5rem;
     font-weight: 700;
-    color: #FFA726;
+    color: var(--accent-color);
     margin-bottom: 8px;
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     line-height: 1;
@@ -421,7 +454,7 @@ body::before {
 .countdown-label {
     display: block;
     font-size: 0.9rem;
-    color: #ffffff;
+    color: var(--text-color);
     text-transform: uppercase;
     letter-spacing: 1px;
     font-weight: 500;

@@ -10,8 +10,8 @@ document.addEventListener('DOMContentLoaded', async function() {
     const thanksMessage = document.getElementById('thanksMessage');
 
     // Définir la date et l'heure de l'événement
-    const EVENT_DATE = new Date(2025, 1, 8);
-    const EVENT_END_HOUR = 19;
+    const EVENT_DATE = new Date(2025, 2, 17); // Mars est 2 en JavaScript (0-indexé)
+    const EVENT_END_HOUR = 14;
     const EVENT_START_HOUR = 8;
 
     // Vérifier l'IP au démarrage
@@ -41,6 +41,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     function isBeforeEvent() {
         const now = new Date();
+        console.log('Vérification isBeforeEvent - Date actuelle:', now);
+        console.log('Vérification isBeforeEvent - Date événement:', EVENT_DATE);
+        console.log('Vérification isBeforeEvent - Avant événement?', now < EVENT_DATE);
         if (now < EVENT_DATE) return true;
         if (!isEventDay()) return false;
         return now.getHours() < EVENT_START_HOUR;
@@ -75,6 +78,10 @@ document.addEventListener('DOMContentLoaded', async function() {
     function updateCountdown() {
         const now = new Date();
         const difference = EVENT_DATE - now;
+
+        console.log('Date actuelle:', now);
+        console.log('Date de l\'événement:', EVENT_DATE);
+        console.log('Différence en ms:', difference);
 
         if (difference <= 0) {
             return;
